@@ -79,7 +79,7 @@ dashboard "github_activity" {
               when $4 = 'closed' then closed_at is not null
               else closed_at is null or closed_at is not null
             end
-,      EOT
+      EOT
       param "username" {}
       param "repo_pattern" {}
       param "issue_or_pull" {}
