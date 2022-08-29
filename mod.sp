@@ -1,5 +1,5 @@
 mod "github_activity" {
-  title = "github activity"
+  title = "GitHub Activity"
 }
 
 locals {

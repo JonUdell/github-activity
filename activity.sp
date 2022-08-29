@@ -3,7 +3,7 @@ dashboard "My_Team_Activity" {
   title = "My team's activity on GitHub"
 
   tags = {
-    service = "GitHub"
+    service = "GitHub Activity"
   }
  
   input "username" {
