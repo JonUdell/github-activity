@@ -1,6 +1,6 @@
-dashboard "My_Team_Activity" {
+dashboard "GitHub_Activity" {
 
-  title = "My team's activity on GitHub"
+  title = "GitHub Activity"
 
   tags = {
     service = "GitHub Activity"
