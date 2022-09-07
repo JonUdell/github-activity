@@ -115,7 +115,7 @@ dashboard "GitHub_Activity" {
       param "open_or_closed" {}
       param "updated" {}
       param "text_match" {}
-      column "url"{
+      column "html_url"{
         wrap = "all"
       }
       column "title" {
