@@ -37,9 +37,33 @@ dashboard "GitHub_Activity" {
     option "both" {}
   }
 
+  input "updated" {
+    width = 2
+    title = "updated since"
+    sql = <<EOQ
+      with days(interval, day) as (
+        values 
+          ( '1 week', to_char(now() - interval '1 month', 'YYYY-MM-DD') ),
+          ( '1 month', to_char(now() - interval '1 month', 'YYYY-MM-DD') ),
+          ( '3 months', to_char(now() - interval '3 month', 'YYYY-MM-DD') ),
+          ( '6 months', to_char(now() - interval '6 month', 'YYYY-MM-DD') ),
+          ( '1 year', to_char(now() - interval '1 year', 'YYYY-MM-DD') ),
+          ( '2 years', to_char(now() - interval '2 year', 'YYYY-MM-DD') )
+      )
+      select
+        interval as label,
+        day as value
+      from 
+        days
+      order by 
+        day desc
+    EOQ    
+  }
+
   input "text_match" {
     type = "combo"
     title = "match text"
+    placeholder = "match in issue/pr body"
     width = 2
     option "none" {}
   }
@@ -54,6 +78,7 @@ dashboard "GitHub_Activity" {
         self.input.repo_pattern.value,
         self.input.issue_or_pull.value,
         self.input.open_or_closed.value,
+        self.input.updated,
         self.input.text_match.value
       ]
       sql = <<EOT
@@ -66,10 +91,11 @@ dashboard "GitHub_Activity" {
         from
             github_activity(
               $1,
-              $2, 
+              $2,
+              $5,
               case 
-                when $5 = 'none' then ''
-                else $5
+                when $6 = 'none' then ''
+                else $6
               end
             )
         where
@@ -89,6 +115,7 @@ dashboard "GitHub_Activity" {
       param "repo_pattern" {}
       param "issue_or_pull" {}
       param "open_or_closed" {}
+      param "updated" {}
       param "text_match" {}
       column "url"{
         wrap = "all"
