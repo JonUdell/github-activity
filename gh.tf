@@ -10,5 +10,5 @@ resource "steampipecloud_workspace_mod" "github_activity" {
   organization = "acme" 
   workspace_handle = "jon"
   path = "github.com/judell/github-activity"
-  constraint = "v0.1.3"
+  constraint = "v0.1.4"
 }
