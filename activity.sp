@@ -43,7 +43,7 @@ dashboard "GitHub_Activity" {
     sql = <<EOQ
       with days(interval, day) as (
         values 
-          ( '1 week', to_char(now() - interval '1 month', 'YYYY-MM-DD') ),
+          ( '1 week', to_char(now() - interval '1 week', 'YYYY-MM-DD') ),
           ( '1 month', to_char(now() - interval '1 month', 'YYYY-MM-DD') ),
           ( '3 months', to_char(now() - interval '3 month', 'YYYY-MM-DD') ),
           ( '6 months', to_char(now() - interval '6 month', 'YYYY-MM-DD') ),
