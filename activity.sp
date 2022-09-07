@@ -63,11 +63,9 @@ dashboard "GitHub_Activity" {
   input "text_match" {
     type = "combo"
     title = "match text"
-    placeholder = "match in issue/pr body"
     width = 2
     option "none" {}
   }
-
 
   container {
 
