@@ -56,6 +56,22 @@ create or replace function github_activity(match_user text, match_repo text, upd
         and i.html_url ~ match_repo
     ),
 
+    my_commenter_issues as (
+      select
+        i.html_url,
+        i.title,
+        i.updated_at,
+        i.created_at,
+        i.closed_at,
+        i.comments,
+        i.body
+      from
+        github_search_issue i
+      where
+        query = 'is:issue in:comments commenter:' || match_user
+        and html_url ~ 'turbot'
+    ),
+
     my_created_pulls as (
       select
         p.html_url,
@@ -110,6 +126,8 @@ create or replace function github_activity(match_user text, match_repo text, upd
       select * from my_assigned_issues
       union
       select * from my_mentioned_issues
+      union
+      select * from my_commenter_issues
       union
       select * from my_created_pulls
       union
