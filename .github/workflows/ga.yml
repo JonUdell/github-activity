@@ -13,8 +13,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
 
-    - name: python
-      run: python -v
+    - name: pwd
+      run: pwd
+      
+    - name: ls
+      run: ls
 
     - name: exit
       if: ${{ steps.checks.outcome == 'failure' }}
