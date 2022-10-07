@@ -1,6 +1,6 @@
 dashboard "GitHub_Activity" {
 
-  title = "GitHub Activity (v0.1.6)"
+  title = "GitHub Activity"
 
   tags = {
     service = "GitHub Activity"
