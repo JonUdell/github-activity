@@ -1,0 +1,22 @@
+name: "refresh github_activity function"
+
+on:
+  schedule:
+    - cron:  '15 * * * *'
+
+  push:
+   branches:
+     - main
+
+jobs:
+  cron:
+    runs-on: ubuntu-latest
+    steps:
+
+    - name: python
+      run: python -v
+
+    - name: exit
+      if: ${{ steps.checks.outcome == 'failure' }}
+      run: exit 1
+      
