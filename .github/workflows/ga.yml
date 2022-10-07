@@ -22,7 +22,7 @@ jobs:
       run: ls
 
     - name: push the function"
-      run: export STEAMPIPE_CLOUD_TOKEN = ${{ secrets.STEAMPIPE_CLOUD_TOKEN }} python push-function.py
+      run: export STEAMPIPE_CLOUD_TOKEN=${{ secrets.STEAMPIPE_CLOUD_TOKEN }} python push-function.py
 
     - name: exit
       if: ${{ steps.checks.outcome == 'failure' }}
