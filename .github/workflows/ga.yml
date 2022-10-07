@@ -8,6 +8,9 @@ on:
    branches:
      - main
 
+env:
+  STEAMPIPE_CLOUD_TOKEN: ${{ secrets.STEAMPIPE_CLOUD_TOKEN }}
+
 jobs:
   cron:
     runs-on: ubuntu-latest
@@ -21,8 +24,8 @@ jobs:
     - name: ls
       run: ls
 
-    - name: push the function"
-      run: export STEAMPIPE_CLOUD_TOKEN=${{ secrets.STEAMPIPE_CLOUD_TOKEN }} python push-function.py
+    - name: push the function
+      run: python push-function.py
 
     - name: exit
       if: ${{ steps.checks.outcome == 'failure' }}
