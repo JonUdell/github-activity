@@ -3,7 +3,103 @@ dashboard "Relationship" {
   title = "GitHub Relationships"
 
   tags = {
-    service = "GitHub Activity"
+    service = "GitHub Relationships"
+  }
+
+  container {
+
+/*
+
+  */
+
+  }
+
+  container {
+
+
+  }
+
+  with "github_pull_activity" {
+    sql = <<EOQ
+        create or replace function public.github_pull_activity(repo text, updated text) 
+        returns table (
+            number int,
+            title text,
+            author_login text,
+            created_at timestamptz,
+            updated_at timestamptz,
+            closed_at timestamptz,
+            merged_by_login text,
+            comments bigint,
+            html_url text
+        ) as $$
+        select
+            s.number,
+            p.title,
+            p.author_login,
+            p.created_at,
+            p.updated_at,
+            p.closed_at,
+            p.merged_by_login,
+            p.comments,
+            p.html_url
+        from
+            github.github_search_pull_request s
+        join
+            github.github_pull_request p
+        on
+            s.number = p.issue_number
+            and s.repository_full_name = p.repository_full_name
+        where
+            s.query = 'repo:turbot/steampipe-docs updated:>' || updated
+        $$ language sql
+    EOQ
+  }
+
+  with "github_pull_author" {
+    sql = <<EOQ
+      create or replace function public.github_pull_author(repo text, updated text)
+      returns table (
+          repo text,
+          created_at timestamptz,
+          issue_number bigint,
+          author_login text
+      ) as $$
+      select
+          repository_full_name,
+          created_at,
+          issue_number,
+          author_login
+      from
+          github_pull_request
+      where
+          repository_full_name = repo
+          and to_char(updated_at, 'YYYY-MM-DD') > updated
+      $$ language sql;
+    EOQ
+  }
+
+  with "github_pull_merger" {
+    sql = <<EOQ
+      create or replace function public.github_pull_merger(repo text, updated text)
+        returns table (
+          repo text,
+          created_at timestamptz,
+          issue_number bigint,
+          merged_by_login text
+        ) as $$
+        select
+          repository_full_name,
+          created_at,
+          issue_number,
+          merged_by_login
+        from
+          github_pull_request
+        where
+          repository_full_name = repo
+          and to_char(updated_at, 'YYYY-MM-DD') > updated
+      $$ language sql;
+    EOQ
   }
 
   with "github_activity" {
@@ -149,20 +245,5 @@ dashboard "Relationship" {
     EOQ
   }
 
-  container {
-
-    input "repos" {
-      sql = <<EOQ
-        select
-          full_name as label,
-          full_name as value
-        from
-          github_my_repository
-        where
-          full_name ~ 'turbot/steampipe-mod'
-      EOQ
-    }
-
-  }
-
+ 
 }
