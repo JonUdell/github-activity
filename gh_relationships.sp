@@ -15,13 +15,10 @@ EOT
   }
 
   container {
-    input "repos" {
-      width = 4
-      base = input.global_repos
-    }
-
+    
     input "updated" {
-      width = 2
+      title = "pull requests updated since"
+      width = 3
       base = input.global_updated
     }
 
@@ -30,11 +27,12 @@ EOT
   container {
     
     graph {
-      title = "people and repos"
+      title = "external contributors"
 
-      category "person" {
+      category "person_external" {
         color = "orange"
         icon = "person"
+        href  = "https://github.com/{{.properties.'login'}}"
       }
 
       category "repo" {
@@ -42,8 +40,10 @@ EOT
         icon = "server"
       }
 
+      /*
+
       node {
-      // people
+      // people: org members
         args = [ self.input.updated ]
         sql = <<EOQ
           with data as (
@@ -55,12 +55,43 @@ EOT
           select
             author_login as id,
             author_login as title,
-            'person' as category
+            'person_org' as category
           from
             data
+          where author_login in (
+            select member_login from github_org_members()
+          )
 
         EOQ
       }
+      */
+
+      node {
+      // people: not org members
+        args = [ self.input.updated ]
+        sql = <<EOQ
+          with data as (
+            select distinct
+              author_login
+            from 
+              public.github_pull_activity('org:turbot', $1)
+          )
+          select
+            author_login as id,
+            author_login as title,
+            'person_external' as category,
+            jsonb_build_object(
+              'login', author_login
+            ) as properties
+          from
+            data
+          where 
+            not author_login in ( select member_login from github_org_members() )
+            and author_login !~ 'dependabot'
+            and not author_login in ( select excluded_member_login from github_org_excluded_members() )
+        EOQ
+      }
+
 
       node {
       // repos
@@ -75,7 +106,11 @@ EOT
           select
             repo as id,
             repo as title,
-            'repo' as category
+            'repo' as category,
+            jsonb_build_object(
+              'name', repo
+            ) as properties
+
           from
             data
 
@@ -100,55 +135,60 @@ EOT
         EOQ
       }
 
-
-
-
     }
 
   }
 
-  table {
-    title = "github_pull_activity_repo"
-    args = [ self.input.repos, self.input.updated ]
-    sql = <<EOQ
-      select 
-        *
-      from
-        github_pull_activity($1, $2)
-    EOQ
-  }
- 
-  table {
-    title = "github_pull_activity_org"
-    args = [ "org:turbot", self.input.updated ]
-    sql = <<EOQ
-      select 
-        *
-      from
-        github_pull_activity($1, $2) 
-    EOQ
-  }
+  container {
 
-  table {
-    title = "github_pull_author_repo"
-    args = [ self.input.repos, self.input.updated ]
-    sql = <<EOQ
-      select 
-        *
-      from
-        github_pull_author_repo(replace($1,'repo:','')::text, $2)
-    EOQ
-  }
+    input "repos" {
+      width = 4
+      base = input.global_repos
+    }
 
-  table {
-    title = "github_pull_merger_repo"
-    args = [ self.input.repos, self.input.updated ]
-    sql = <<EOQ
-      select 
-        *
-      from
-        github_pull_merger_repo(replace($1,'repo:','')::text, $2)
-    EOQ
+    table {
+      title = "github_pull_activity_repo"
+      args = [ self.input.repos, self.input.updated ]
+      sql = <<EOQ
+        select 
+          *
+        from
+          github_pull_activity($1, $2)
+      EOQ
+    }
+  
+    table {
+      title = "github_pull_activity_org"
+      args = [ "org:turbot", self.input.updated ]
+      sql = <<EOQ
+        select 
+          *
+        from
+          github_pull_activity($1, $2) 
+      EOQ
+    }
+
+    table {
+      title = "github_pull_author_repo"
+      args = [ self.input.repos, self.input.updated ]
+      sql = <<EOQ
+        select 
+          *
+        from
+          github_pull_author_repo(replace($1,'repo:','')::text, $2)
+      EOQ
+    }
+
+    table {
+      title = "github_pull_merger_repo"
+      args = [ self.input.repos, self.input.updated ]
+      sql = <<EOQ
+        select 
+          *
+        from
+          github_pull_merger_repo(replace($1,'repo:','')::text, $2)
+      EOQ
+    }
   }
 
   with "github_pull_activity" {
@@ -237,5 +277,47 @@ EOT
       $$ language sql;
     EOQ
   }
+
+  with "github_org_members" {
+    sql = <<EOQ
+      create or replace function public.github_org_members() returns table (
+        member_login text
+      ) as $$
+      select
+        jsonb_array_elements_text(member_logins) as member_login
+      from
+        github_organization
+      where
+        login = 'turbot'
+      $$ language sql;
+    EOQ
+  }
+
+  with "github_excluded_org_members" {
+    sql = <<EOQ
+      create or replace function public.github_org_excluded_members() returns table (
+        excluded_member_login text
+      ) as $$
+      select
+        unnest ( array [
+          'LalitLab',
+          'Priyanka585464',
+          'c0d3r-arnab',
+          'Paulami30',
+          'RupeshPatil20',
+          'akumar-99',
+          'anisadas',
+          'debabrat-git',
+          'krishna5891',
+          'rajeshbal65',
+          'sayan133',
+          'shivani1982',
+          'subham9418',
+          'visiit'          
+        ] ) as excluded_org_member
+      $$ language sql;
+    EOQ
+  }
+
  
-}
+} 
