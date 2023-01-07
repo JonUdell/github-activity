@@ -1,3 +1,25 @@
+node "people_org_members" {
+  sql = <<EOQ
+    with data as (
+      select 
+        member_login
+      from
+        github_org_members()
+      where not 
+        member_login in ( select excluded_member_login from github_org_excluded_members() )
+    )
+    select
+      member_login as id,
+      member_login as title,
+      'person_org' as category,
+      jsonb_build_object(
+        'member_login', member_login
+      ) as properties
+    from
+      data
+  EOQ
+}
+
 node "people_not_org_members" {
   sql = <<EOQ
     with data as (
@@ -77,7 +99,7 @@ node "closed_pull_requests_for_repo" {
     )
     select
       number as id,
-      number as title,
+      title,
       'closed-pull-request' as category,
       jsonb_build_object(
         'repository_full_name', repository_full_name,
