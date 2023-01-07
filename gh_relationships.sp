@@ -50,24 +50,24 @@ EOT
   }
 
   table {
-    title = "github_pull_author"
+    title = "github_pull_author_repo"
     args = [ self.input.repos, self.input.updated ]
     sql = <<EOQ
       select 
         *
       from
-        github_pull_author($1, $2)
+        github_pull_author_repo(replace($1,'repo:','')::text, $2)
     EOQ
   }
 
   table {
-    title = "github_pull_merger"
+    title = "github_pull_merger_repo"
     args = [ self.input.repos, self.input.updated ]
     sql = <<EOQ
       select 
         *
-    from
-        github_pull_merger($1, $2)
+      from
+        github_pull_merger_repo(replace($1,'repo:','')::text, $2)
     EOQ
   }
 
@@ -114,9 +114,9 @@ EOT
      EOQ
   }
 
-  with "github_pull_author" {
+  with "github_pull_author_repo" {
     sql = <<EOQ
-      create or replace function public.github_pull_author(repo text, updated text)
+      create or replace function public.github_pull_author_repo(repo text, updated text)
       returns table (
         number bigint,
         author_login text,
@@ -136,9 +136,9 @@ EOT
     EOQ
   }
 
-  with "github_pull_merger" {
+  with "github_pull_merger_repo" {
     sql = <<EOQ
-      create or replace function public.github_pull_merger(repo text, updated text)
+      create or replace function public.github_pull_merger_repo(repo text, updated text)
         returns table (
           number bigint,
           merged_by_login text,
