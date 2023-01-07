@@ -27,6 +27,86 @@ EOT
 
   }
 
+  container {
+    
+    graph {
+      title = "people and repos"
+
+      category "person" {
+        color = "orange"
+        icon = "person"
+      }
+
+      category "repo" {
+        color = "yellow"
+        icon = "server"
+      }
+
+      node {
+      // people
+        args = [ self.input.updated ]
+        sql = <<EOQ
+          with data as (
+            select distinct
+              author_login
+            from 
+              public.github_pull_activity('org:turbot', $1)
+          )
+          select
+            author_login as id,
+            author_login as title,
+            'person' as category
+          from
+            data
+
+        EOQ
+      }
+
+      node {
+      // repos
+        args = [ self.input.updated ]
+        sql = <<EOQ
+          with data as (
+            select distinct
+              repository_full_name as repo
+            from 
+              public.github_pull_activity('org:turbot', $1)
+          )
+          select
+            repo as id,
+            repo as title,
+            'repo' as category
+          from
+            data
+
+        EOQ
+      }
+
+      edge { //  person author repo
+        args = [ self.input.updated ]
+        sql = <<EOQ
+          with data as (
+            select distinct
+              author_login as from_id,
+              repository_full_name as to_id,
+              'author' as title
+            from
+              public.github_pull_activity('org:turbot', $1)
+          )
+          select
+            *
+          from 
+            data
+        EOQ
+      }
+
+
+
+
+    }
+
+  }
+
   table {
     title = "github_pull_activity_repo"
     args = [ self.input.repos, self.input.updated ]
