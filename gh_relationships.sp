@@ -1,22 +1,17 @@
 dashboard "Relationship" {
 
-  title = "GitHub Relationships"
-
   tags = {
-    service = "GitHub Relationships"
+    service = "GitHub Activity"
   }
 
   container {
-
-/*
-
-  */
-
-  }
-
-  container {
-
-
+    text {
+      value = <<EOT
+[ActivityForPerson](${local.host}/github.dashboard.ActivityForPerson)
+🞄
+Relationship
+EOT
+    }
   }
 
   with "github_pull_activity" {
@@ -244,6 +239,5 @@ dashboard "Relationship" {
     $$ language sql;
     EOQ
   }
-
  
 }

@@ -1,13 +1,12 @@
-mod "github_activity" {
+mod "github" {
   title = "GitHub Activity"
 }
 
 locals {
-  default_org = {
-    name = "turbot"
+  //host = "https://cloud.steampipe.io/org/acme/workspace/jon/dashboard"
+  host = "http://localhost:9194"
+  default_org = "turbot"
+  default_user = "judell"
   }
-  default_user = {
-    name = "judell"
-  }
-}
+
 
