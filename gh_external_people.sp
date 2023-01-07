@@ -55,7 +55,7 @@ EOT
 
       edge {
         args = [ self.input.updated ]
-        base = edge.person_author_repo
+        base = edge.person_repo
       }
 
     }

@@ -8,7 +8,9 @@ input "repos" {
     from
       github_my_repository
     where
-      full_name ~ 'turbot/steampipe-mod'
+      full_name ~ 'turbot/steampipe-(mod|plugin)'
+    order by
+      full_name
   EOQ
 }
 

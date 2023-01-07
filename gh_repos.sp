@@ -32,6 +32,51 @@ EOT
 
   }
 
+ container {
+
+   graph {
+
+     category "repo" {
+       color = "yellow"
+       icon = "server"
+     }
+
+     category "closed-pull-request" {
+       color = "green"
+       icon = "question-mark-circle"
+       href = "https://github.com/{{.properties.'repository_full_name'}}/pull/{{.properties.'number'}}"
+     }
+
+     category "open-pull-request" {
+       color = "red"
+       icon = "question-mark-circle"
+       href = "https://github.com/{{.properties.'repository_full_name'}}/pull/{{.properties.'number'}}"
+     }
+
+     node {
+       args = [ self.input.repos, self.input.updated ]
+       base = node.org_repo
+     }
+
+     node {
+       args = [ self.input.repos, self.input.updated ]
+       base = node.closed_pull_requests_for_repo
+     }
+
+     node {
+       args = [ self.input.repos, self.input.updated ]
+       base = node.open_pull_requests_for_repo
+     }
+
+     edge {
+       args = [ self.input.repos, self.input.updated ]
+       base = edge.pr_repo
+     }
+
+   }
+
+ }
+
   container {
 
     table {
@@ -39,12 +84,16 @@ EOT
       args = [ self.input.repos, self.input.updated ]
       sql = <<EOQ
         select
-          *
+          number,
+          closed_at,
+          updated_at,
+          author_login,
+          title,
+          html_url
         from
           github_pull_activity($1, $2)
       EOQ
     }
-
 
   }
 

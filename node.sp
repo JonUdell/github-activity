@@ -42,5 +42,84 @@ node "org_repos" {
   EOQ
 }
 
+node "org_repo" {
+  sql = <<EOQ
+    with data as (
+      select distinct
+        repository_full_name
+      from
+        public.github_pull_activity($1, $2)
+    )
+    select
+      repository_full_name as id,
+      repository_full_name as title,
+      'repo' as category,
+      jsonb_build_object(
+        'repository_full_name', repository_full_name
+      ) as properties
+    from
+      data
+  EOQ
+}
+
+
+node "closed_pull_requests_for_repo" {
+  sql = <<EOQ
+    with data as (
+      select distinct
+        number,
+        title,
+        closed_at,
+        repository_full_name,
+        author_login as author
+      from
+        public.github_pull_activity($1, $2)
+    )
+    select
+      number as id,
+      number as title,
+      'closed-pull-request' as category,
+      jsonb_build_object(
+        'repository_full_name', repository_full_name,
+        'author', author,
+        'number', number,
+        'closed_at', closed_at,
+        'title', title
+      ) as properties
+    from
+      data
+    where closed_at is not null
+  EOQ
+}
+
+node "open_pull_requests_for_repo" {
+  sql = <<EOQ
+    with data as (
+      select distinct
+        number,
+        title,
+        closed_at,
+        repository_full_name,
+        author_login as author
+      from
+        public.github_pull_activity($1, $2)
+    )
+    select
+      number as id,
+      number as title,
+      'open-pull-request' as category,
+      jsonb_build_object(
+        'repository_full_name', repository_full_name,
+        'author', author,
+        'number', number,
+        'closed_at', closed_at,
+        'title', title
+      ) as properties
+    from
+      data
+    where closed_at is null
+  EOQ
+}
+
 
 
