@@ -14,62 +14,111 @@ EOT
     }
   }
 
+  container {
+
+    input "repos" {
+      width = 4
+      base = input.global_repos
+    }
+
+    input "updated" {
+      width = 2
+      base = input.global_updated
+    }
+
+  }
+
+/*
+  table {
+    title = "github_pull_activity"
+    args = [ self.input.repos, self.input.updated ]
+    sql = <<EOQ
+      select 
+        *
+      from
+        github_pull_activity($1, $2)
+    EOQ
+  }
+*/
+
+  table {
+    title = "github_pull_author"
+    args = [ self.input.repos, self.input.updated ]
+    sql = <<EOQ
+      select 
+        *
+      from
+        github_pull_author($1, $2)
+    EOQ
+  }
+
+table {
+  title = "github_pull_merger"
+  args = [ self.input.repos, self.input.updated ]
+  sql = <<EOQ
+    select 
+      *
+   from
+      github_pull_merger($1, $2)
+  EOQ
+  }
+
+
   with "github_pull_activity" {
     sql = <<EOQ
-        create or replace function public.github_pull_activity(repo text, updated text) 
-        returns table (
-            number int,
-            title text,
-            author_login text,
-            created_at timestamptz,
-            updated_at timestamptz,
-            closed_at timestamptz,
-            merged_by_login text,
-            comments bigint,
-            html_url text
-        ) as $$
-        select
-            s.number,
-            p.title,
-            p.author_login,
-            p.created_at,
-            p.updated_at,
-            p.closed_at,
-            p.merged_by_login,
-            p.comments,
-            p.html_url
-        from
-            github.github_search_pull_request s
-        join
-            github.github_pull_request p
-        on
-            s.number = p.issue_number
-            and s.repository_full_name = p.repository_full_name
-        where
-            s.query = 'repo:turbot/steampipe-docs updated:>' || updated
-        $$ language sql
-    EOQ
+      create or replace function public.github_pull_activity(repo text, updated text)
+      returns table (
+        number int,
+        title text,
+        author_login text,
+        created_at text,
+        updated_at text,
+        closed_at text,
+        merged_by_login text,
+        comments bigint,
+        html_url text
+      ) as $$
+      select
+        s.number,
+        p.title,
+        p.author_login,
+        to_char(p.created_at, 'YYYY-MM-DD'),
+        to_char(s.updated_at, 'YYYY-MM-DD'),
+        to_char(p.closed_at, 'YYYY-MM-DD'),
+        p.merged_by_login,
+        p.comments,
+        p.html_url
+      from
+        github.github_search_pull_request s
+      join
+        github.github_pull_request p
+      on
+        s.number = p.issue_number
+        and s.repository_full_name = p.repository_full_name
+      where
+        s.query = 'repo:' || repo || ' updated:>' || updated
+      $$ language sql;
+        EOQ
   }
 
   with "github_pull_author" {
     sql = <<EOQ
       create or replace function public.github_pull_author(repo text, updated text)
       returns table (
-          repo text,
-          created_at timestamptz,
-          issue_number bigint,
-          author_login text
+        number bigint,
+        author_login text,
+        created_at text
       ) as $$
       select
-          repository_full_name,
-          created_at,
-          issue_number,
-          author_login
+        issue_number,
+        author_login,
+        to_char(created_at, 'YYYY-MM-DD')
       from
-          github_pull_request
+        github_pull_request
       where
-          repository_full_name = repo
-          and to_char(updated_at, 'YYYY-MM-DD') > updated
+        repository_full_name = repo
+        and to_char(updated_at, 'YYYY-MM-DD') > updated
+        order by issue_number      
       $$ language sql;
     EOQ
   }
@@ -78,21 +127,20 @@ EOT
     sql = <<EOQ
       create or replace function public.github_pull_merger(repo text, updated text)
         returns table (
-          repo text,
-          created_at timestamptz,
-          issue_number bigint,
-          merged_by_login text
+          number bigint,
+          merged_by_login text,
+          created_at text
         ) as $$
         select
-          repository_full_name,
-          created_at,
           issue_number,
-          merged_by_login
+          merged_by_login,
+          to_char(created_at, 'YYYY-MM-DD')
         from
           github_pull_request
         where
           repository_full_name = repo
           and to_char(updated_at, 'YYYY-MM-DD') > updated
+          order by issue_number
       $$ language sql;
     EOQ
   }
