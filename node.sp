@@ -32,7 +32,7 @@ node "org_repos" {
     )
     select
       repository_full_name as id,
-      repository_full_name as title,
+      replace(repository_full_name, 'turbot/steampipe-', '') as title,
       'repo' as category,
       jsonb_build_object(
         'repository_full_name', repository_full_name
@@ -52,7 +52,7 @@ node "org_repo" {
     )
     select
       repository_full_name as id,
-      repository_full_name as title,
+      replace(repository_full_name, 'turbot/steampipe-', '') as title,
       'repo' as category,
       jsonb_build_object(
         'repository_full_name', repository_full_name
@@ -111,7 +111,7 @@ node "open_pull_requests_for_repo" {
       jsonb_build_object(
         'repository_full_name', repository_full_name,
         'author', author,
-        'number', number,
+        'pr number', number,
         'closed_at', closed_at,
         'title', title
       ) as properties
