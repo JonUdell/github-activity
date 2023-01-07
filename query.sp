@@ -9,10 +9,6 @@ query "usernames" {
         login = '${local.default_org}'
     )
     select
-      '${local.default_user}' as label,
-      '${local.default_user}' as value
-    union all
-    select
       member_login as label,
       member_login as value
     from

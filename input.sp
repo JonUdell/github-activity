@@ -17,7 +17,7 @@ input "global_updated" {
   title = "updated since"
   sql = <<EOQ
     with days(interval, day) as (
-    values 
+    values
       ( '1 week', to_char(now() - interval '1 week', 'YYYY-MM-DD') ),
       ( '2 weeks', to_char(now() - interval '2 week', 'YYYY-MM-DD') ),
       ( '1 month', to_char(now() - interval '1 month', 'YYYY-MM-DD') ),
@@ -29,9 +29,9 @@ input "global_updated" {
     select
       interval as label,
       day as value
-    from 
+    from
       days
-    order by 
+    order by
       day desc
   EOQ    
 }
