@@ -15,7 +15,6 @@ EOT
   }
 
   container {
-
     input "repos" {
       width = 4
       base = input.global_repos
@@ -28,9 +27,8 @@ EOT
 
   }
 
-/*
   table {
-    title = "github_pull_activity"
+    title = "github_pull_activity_repo"
     args = [ self.input.repos, self.input.updated ]
     sql = <<EOQ
       select 
@@ -39,7 +37,17 @@ EOT
         github_pull_activity($1, $2)
     EOQ
   }
-*/
+ 
+  table {
+    title = "github_pull_activity_org"
+    args = [ "org:turbot", self.input.updated ]
+    sql = <<EOQ
+      select 
+        *
+      from
+        github_pull_activity($1, $2) 
+    EOQ
+  }
 
   table {
     title = "github_pull_author"
@@ -52,38 +60,41 @@ EOT
     EOQ
   }
 
-table {
-  title = "github_pull_merger"
-  args = [ self.input.repos, self.input.updated ]
-  sql = <<EOQ
-    select 
-      *
-   from
-      github_pull_merger($1, $2)
-  EOQ
+  table {
+    title = "github_pull_merger"
+    args = [ self.input.repos, self.input.updated ]
+    sql = <<EOQ
+      select 
+        *
+    from
+        github_pull_merger($1, $2)
+    EOQ
   }
-
 
   with "github_pull_activity" {
     sql = <<EOQ
-      create or replace function public.github_pull_activity(repo text, updated text)
+      create or replace function public.github_pull_activity(q text, updated text)
       returns table (
+        query text,
+        repository_full_name text,
+        updated_at text,
         number int,
         title text,
         author_login text,
         created_at text,
-        updated_at text,
         closed_at text,
         merged_by_login text,
         comments bigint,
         html_url text
       ) as $$
       select
+        s.query,
+        p.repository_full_name,
+        to_char(s.updated_at, 'YYYY-MM-DD'),
         s.number,
         p.title,
         p.author_login,
         to_char(p.created_at, 'YYYY-MM-DD'),
-        to_char(s.updated_at, 'YYYY-MM-DD'),
         to_char(p.closed_at, 'YYYY-MM-DD'),
         p.merged_by_login,
         p.comments,
@@ -96,9 +107,11 @@ table {
         s.number = p.issue_number
         and s.repository_full_name = p.repository_full_name
       where
-        s.query = 'repo:' || repo || ' updated:>' || updated
+        s.query = q || ' updated:>' || updated
+      order by
+        p.updated_at desc
       $$ language sql;
-        EOQ
+     EOQ
   }
 
   with "github_pull_author" {

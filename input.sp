@@ -4,7 +4,7 @@ input "repos" {
   sql = <<EOQ
     select
       full_name as label,
-      full_name as value
+      'repo:' || full_name as value
     from
       github_my_repository
     where
