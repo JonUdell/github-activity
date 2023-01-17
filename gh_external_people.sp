@@ -138,7 +138,9 @@ EOT
   }
 
   with "grant" {
-    grant execute on all functions in schema public to public
+    sql = <<EOQ
+      grant execute on all functions in schema public to public
+    EOQ
   }
 
 }
