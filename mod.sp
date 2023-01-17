@@ -1,4 +1,4 @@
-mod "github" {
+mod "github_activity" {
   title = "GitHub Activity"
 }
 
