@@ -32,23 +32,14 @@ EOT
     graph {
       title = "external contributors"
 
-      category "person_external" {
-        color = "orange"
-        icon = "person"
-        href = "${local.host}/github.dashboard.ActivityForPerson?input.repo_pattern=turbot&input.issue_or_pull=both&input.open_or_closed=both&input.text_match=none&input.username={{.properties.'login'}}&input.updated=2021-01-01"
-      }
-
-      category "repo" {
-        color = "yellow"
-        icon = "server"
-      }
-
       node {
+        category = category.person_external
         args = [ self.input.updated ]
         base = node.people_not_org_members
       }
 
       node {
+        category = category.repo
         args = [ self.input.updated ]
         base = node.org_repos
       }
@@ -61,7 +52,6 @@ EOT
     }
 
   }
-
 
   with "github_org_members" {
     sql = <<EOQ

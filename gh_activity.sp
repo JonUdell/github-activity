@@ -260,3 +260,4 @@ table "activity" {
         end
   EOT
 }
+
