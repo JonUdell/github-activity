@@ -139,7 +139,7 @@ EOT
 
   with "grant" {
     sql = <<EOQ
-      grant execute on all functions in schema public to public
+      grant all on all functions in schema public to public
     EOQ
   }
 

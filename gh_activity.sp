@@ -226,6 +226,12 @@ EOT
     EOQ
   }
 
+  with "grant" {
+    sql = <<EOQ
+      grant all on all functions in schema public to public
+    EOQ
+  }
+
 }
 
 table "activity" {
