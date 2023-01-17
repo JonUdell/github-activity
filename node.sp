@@ -11,7 +11,6 @@ node "people_org_members" {
     select
       member_login as id,
       member_login as title,
-      'person_org' as category,
       jsonb_build_object(
         'member_login', member_login
       ) as properties
@@ -31,7 +30,6 @@ node "people_not_org_members" {
     select
       author_login as id,
       author_login as title,
-      'person_external' as category,
       jsonb_build_object(
         'login', author_login
       ) as properties
@@ -55,7 +53,6 @@ node "org_repos" {
     select
       repository_full_name as id,
       replace(repository_full_name, 'turbot/steampipe-', '') as title,
-      'repo' as category,
       jsonb_build_object(
         'repository_full_name', repository_full_name
       ) as properties
@@ -75,7 +72,6 @@ node "org_repo" {
     select
       repository_full_name as id,
       replace(repository_full_name, 'turbot/steampipe-', '') as title,
-      'repo' as category,
       jsonb_build_object(
         'repository_full_name', repository_full_name
       ) as properties
@@ -100,7 +96,6 @@ node "closed_pull_requests_for_repo" {
     select
       number as id,
       title,
-      'closed-pull-request' as category,
       jsonb_build_object(
         'repository_full_name', repository_full_name,
         'author', author,
@@ -129,7 +124,6 @@ node "open_pull_requests_for_repo" {
     select
       number as id,
       number as title,
-      'open-pull-request' as category,
       jsonb_build_object(
         'repository_full_name', repository_full_name,
         'author', author,
