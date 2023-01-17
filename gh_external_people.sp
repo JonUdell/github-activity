@@ -7,11 +7,11 @@ dashboard "ExternalPeople" {
   container {
     text {
       value = <<EOT
-[ActivityForPerson](${local.host}/github.dashboard.ActivityForPerson)
+[ActivityForPerson](${local.host}/github_activity.dashboard.ActivityForPerson)
 🞄
 ExternalPeople
 🞄
-[Repos](${local.host}/github.dashboard.Repos)
+[Repos](${local.host}/github_activity.dashboard.Repos)
 
 EOT
     }
