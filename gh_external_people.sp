@@ -137,4 +137,8 @@ EOT
      EOQ
   }
 
+  with "grant" {
+    grant execute on all functions in schema public to public
+  }
+
 }
