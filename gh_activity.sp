@@ -226,12 +226,6 @@ EOT
     EOQ
   }
 
-  with "grant" {
-    sql = <<EOQ
-      grant all on all functions in schema public to judell
-    EOQ
-  }
-
 }
 
 table "activity" {
