@@ -38,20 +38,20 @@ EOT
 
       node {
         category = category.repo
-        args = [ self.input.repos, self.input.updated ]
-        base = node.org_repo
-      }
-
-      node {
-        category = category.closed_pull_request
-        args = [ self.input.repos, self.input.updated ]
-        base = node.closed_pull_requests_for_repo
+        args = [ "org:turbot", self.input.updated.value ]
+        base = node.org_repos
       }
 
       node {
         category = category.open_pull_request
-        args = [ self.input.repos, self.input.updated ]
-        base = node.open_pull_requests_for_repo
+        args = [ self.input.repos.value, self.input.updated.value ]
+        base = node.open_internal_pull_requests
+      }
+
+      node {
+        category = category.closed_pull_request
+        args = [ self.input.repos.value, self.input.updated.value ]
+        base = node.closed_internal_pull_requests
       }
 
       node {
@@ -60,14 +60,21 @@ EOT
       }
 
       edge {
-        args = [ self.input.repos, self.input.updated ]
-        base = edge.pr_repo
+        args = [ self.input.repos.value, self.input.updated.value ]
+        base = edge.person_open_pr
       }
 
       edge {
-        args = [ self.input.repos, self.input.updated ]
-        base = edge.person_pr
+        args = [ self.input.repos.value, self.input.updated.value ]
+        base = edge.person_closed_pr
       }
+
+      edge {
+        args = [ self.input.repos.value, self.input.updated.value ]
+        base = edge.pr_repo
+      }
+
+
 
     }
 
@@ -77,12 +84,13 @@ EOT
 
     table {
       title = "github_pull_activity_repo"
-      args = [ self.input.repos, self.input.updated ]
+      args = [ self.input.repos.value, self.input.updated.value ]
       sql = <<EOQ
         select
           number,
-          closed_at,
+          created_at,
           updated_at,
+          closed_at,
           author_login,
           title,
           html_url

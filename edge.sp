@@ -1,36 +1,19 @@
-edge "person_repo" {
+edge "person_pr" {
   sql = <<EOQ
     select distinct
       author_login as from_id,
-      repository_full_name as to_id,
-      'pull' as title,
-      jsonb_build_object(
-        'repository_full_name', repository_full_name,
-        'author', author_login
-      ) as properties
-    from
-      public.github_pull_activity('org:turbot', $1)
-  EOQ
-}
-
-edge "pr_repo" {
-  sql = <<EOQ
-    select distinct
-      number as from_id,
-      repository_full_name as to_id,
-      'pull' as title,
+      number as to_id,
       jsonb_build_object(
         'repository_full_name', repository_full_name,
         'author', author_login,
         'title', title
       ) as properties
-
     from
       public.github_pull_activity($1, $2)
   EOQ
 }
 
-edge "person_pr" {
+edge "person_open_pr" {
   sql = <<EOQ
     select distinct
       author_login as from_id,
@@ -39,6 +22,45 @@ edge "person_pr" {
       jsonb_build_object(
         'repository_full_name', repository_full_name,
         'author', author_login,
+        'html_url', html_url,
+        'closed_at', closed_at
+      ) as properties
+    from
+      public.github_pull_activity($1, $2)
+    where
+      closed_at is null
+    EOQ
+}
+
+edge "person_closed_pr" {
+  sql = <<EOQ
+    select distinct
+      author_login as from_id,
+      number as to_id,
+      'author' as title,
+      jsonb_build_object(
+        'repository_full_name', repository_full_name,
+        'author', author_login,
+        'html_url', html_url,
+        'closed_at', closed_at
+      ) as properties
+    from
+      public.github_pull_activity($1, $2)
+    where
+      closed_at is not null
+  EOQ
+}
+
+
+edge "pr_repo" {
+  sql = <<EOQ
+    select distinct
+      repository_full_name || '_' || number as from_id,
+      repository_full_name as to_id,
+      'pull' as title,
+      jsonb_build_object(
+        'repository_full_name', repository_full_name,
+        'author', author_login,
         'title', title
       ) as properties
 
@@ -46,5 +68,4 @@ edge "person_pr" {
       public.github_pull_activity($1, $2)
   EOQ
 }
-
 

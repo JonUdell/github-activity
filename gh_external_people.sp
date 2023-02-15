@@ -29,27 +29,119 @@ EOT
 
   container {
 
+    card {
+      width = 2
+      args = [ "org:turbot", self.input.updated.value]
+      sql = <<EOQ
+        with data as (
+          select
+            *
+          from
+            github_pull_activity($1, $2)
+          where
+            author_login not in (select * from github_org_members() )
+            and not author_login ~ 'dependabot'
+            and closed_at is null
+          )
+        select
+          count(*) as "open external prs"
+        from
+          data
+      EOQ
+    }
+
+    card {
+      width = 2
+      args = [ "org:turbot", self.input.updated.value]
+      sql = <<EOQ
+        with data as (
+          select
+            *
+          from
+            github_pull_activity($1, $2)
+          where
+            author_login not in (select * from github_org_members() )
+            and not author_login ~ 'dependabot'
+            and closed_at is not null
+          )
+        select
+          count(*) as "closed external prs"
+        from
+          data
+      EOQ
+    }
+
+
+  }
+
+  container {
+
     graph {
       title = "external contributors"
 
       node {
         category = category.person_external
-        args = [ self.input.updated ]
+        args = [ self.input.updated.value ]
         base = node.people_not_org_members
       }
 
       node {
         category = category.repo
-        args = [ self.input.updated ]
+        args = [ "org:turbot", self.input.updated.value ]
         base = node.org_repos
       }
 
-      edge {
-        args = [ self.input.updated ]
-        base = edge.person_repo
+      node {
+        category = category.open_pull_request
+        args = [ "org:turbot", self.input.updated.value ]
+        base = node.open_external_pull_requests
       }
 
+      node {
+        category = category.closed_pull_request
+        args = [ "org:turbot", self.input.updated.value ]
+        base = node.closed_external_pull_requests
+      }
+
+      edge {
+        args = [ "org:turbot", self.input.updated.value ]
+        base = edge.person_open_pr
+      }
+
+      edge {
+        args = [ "org:turbot", self.input.updated.value ]
+        base = edge.person_closed_pr
+      }
+
+      edge {
+        args = [ "org:turbot", self.input.updated.value ]
+        base = edge.pr_repo
+      }
+
+
+
     }
+
+    table {
+      args = [ "org:turbot", self.input.updated.value ]
+      sql = <<EOQ
+        select
+          author_login,
+          repository_full_name,
+          created_at,
+          closed_at,
+          title,
+          html_url
+        from
+          github_pull_activity($1, $2)
+        where
+          author_login not in (select * from github_org_members() )
+          and not author_login ~ 'dependabot'
+        order by 
+          created_at
+      EOQ
+    }
+
 
   }
 
@@ -117,6 +209,7 @@ EOT
         s.number,
         p.title,
         p.author_login,
+        p.closed_at,
         to_char(p.created_at, 'YYYY-MM-DD'),
         to_char(p.closed_at, 'YYYY-MM-DD'),
         p.merged_by_login,
@@ -131,6 +224,7 @@ EOT
         and s.repository_full_name = p.repository_full_name
       where
         s.query = q || ' updated:>' || updated
+        and p.author_login !~* 'dependabot'
       order by
         p.updated_at desc
       $$ language sql;

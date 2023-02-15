@@ -71,7 +71,7 @@ EOT
         self.input.repo_pattern.value,
         self.input.issue_or_pull.value,
         self.input.open_or_closed.value,
-        self.input.updated,
+        self.input.updated.value,
         self.input.text_match.value
       ]
       column "html_url"{
