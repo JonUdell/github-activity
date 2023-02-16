@@ -1,5 +1,17 @@
 dashboard "drop_functions" {
 
+  table {
+    sql = <<EOQ
+      select
+        current_user,
+        user,
+        session_user,
+        current_database(),
+        current_catalog,
+        version()
+    EOQ
+  }
+
   with "drop_github_activity" {
     sql = <<EOQ
       drop function public.github_activity;
