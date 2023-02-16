@@ -129,6 +129,7 @@ EOT
           author_login,
           repository_full_name,
           created_at,
+          updated_at,
           closed_at,
           title,
           html_url

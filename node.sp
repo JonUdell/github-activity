@@ -61,30 +61,12 @@ node "org_repos" {
   EOQ
 }
 
-node "org_repo" {
-  sql = <<EOQ
-    with data as (
-      select distinct
-        repository_full_name
-      from
-        public.github_pull_activity($1, $2)
-    )
-    select
-      repository_full_name as id,
-      replace(repository_full_name, 'turbot/steampipe-', '') as title,
-      jsonb_build_object(
-        'repository_full_name', repository_full_name
-      ) as properties
-    from
-      data
-  EOQ
-}
-
 node "open_internal_pull_requests" {
   sql = <<EOQ
     with data as (
       select distinct
         number,
+        repository_full_name || '_' || number as pr,
         title,
         created_at,
         closed_at,
@@ -99,7 +81,7 @@ node "open_internal_pull_requests" {
         and closed_at is null
     )
     select
-      number as id,
+      pr as id,
       title,
       jsonb_build_object(
         'repository_full_name', repository_full_name,
@@ -120,6 +102,7 @@ node "closed_internal_pull_requests" {
     with data as (
       select distinct
         number,
+        repository_full_name || '_' || number as pr,
         title,
         created_at,
         closed_at,
@@ -134,7 +117,7 @@ node "closed_internal_pull_requests" {
         and closed_at is not null
     )
     select
-      number as id,
+      pr as id,
       title,
       jsonb_build_object(
         'repository_full_name', repository_full_name,
@@ -150,12 +133,12 @@ node "closed_internal_pull_requests" {
   EOQ
 }
 
-
 node "open_external_pull_requests" {
   sql = <<EOQ
     with data as (
       select distinct
         number,
+        repository_full_name || '_' || number as pr,
         title,
         created_at,
         closed_at,
@@ -170,7 +153,7 @@ node "open_external_pull_requests" {
         and closed_at is null
     )
     select
-      number as id,
+      pr as id,
       title,
       jsonb_build_object(
         'repository_full_name', repository_full_name,
@@ -191,6 +174,7 @@ node "closed_external_pull_requests" {
     with data as (
       select distinct
         number,
+        repository_full_name || '_' || number as pr,
         title,
         created_at,
         closed_at,
@@ -205,7 +189,7 @@ node "closed_external_pull_requests" {
         and closed_at is not null
     )
     select
-      number as id,
+      pr as id,
       title,
       jsonb_build_object(
         'repository_full_name', repository_full_name,
