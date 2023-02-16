@@ -195,6 +195,7 @@ EOT
         repository_full_name text,
         updated_at text,
         number int,
+        pr text,
         title text,
         author_login text,
         created_at text,
@@ -208,9 +209,9 @@ EOT
         p.repository_full_name,
         to_char(s.updated_at, 'YYYY-MM-DD'),
         s.number,
+        s.repository_full_name || '_' || s.number as pr,
         p.title,
         p.author_login,
-        p.closed_at,
         to_char(p.created_at, 'YYYY-MM-DD'),
         to_char(p.closed_at, 'YYYY-MM-DD'),
         p.merged_by_login,
@@ -231,5 +232,6 @@ EOT
       $$ language sql;
      EOQ
   }
+
 
 }

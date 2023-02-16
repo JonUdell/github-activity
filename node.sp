@@ -65,14 +65,7 @@ node "open_internal_pull_requests" {
   sql = <<EOQ
     with data as (
       select distinct
-        number,
-        repository_full_name || '_' || number as pr,
-        title,
-        created_at,
-        closed_at,
-        repository_full_name,
-        author_login as author,
-        html_url
+        *
       from
         public.github_pull_activity($1, $2)
       where
@@ -85,7 +78,7 @@ node "open_internal_pull_requests" {
       title,
       jsonb_build_object(
         'repository_full_name', repository_full_name,
-        'author', author,
+        'author', author_login,
         'number', number,
         'created_at', created_at,
         'closed_at', closed_at,
@@ -101,14 +94,7 @@ node "closed_internal_pull_requests" {
   sql = <<EOQ
     with data as (
       select distinct
-        number,
-        repository_full_name || '_' || number as pr,
-        title,
-        created_at,
-        closed_at,
-        repository_full_name,
-        author_login as author,
-        html_url
+        *
       from
         public.github_pull_activity($1, $2)
       where
@@ -121,7 +107,7 @@ node "closed_internal_pull_requests" {
       title,
       jsonb_build_object(
         'repository_full_name', repository_full_name,
-        'author', author,
+        'author', author_login,
         'number', number,
         'created_at', created_at,
         'closed_at', closed_at,
@@ -137,14 +123,7 @@ node "open_external_pull_requests" {
   sql = <<EOQ
     with data as (
       select distinct
-        number,
-        repository_full_name || '_' || number as pr,
-        title,
-        created_at,
-        closed_at,
-        repository_full_name,
-        author_login as author,
-        html_url
+        *
       from
         public.github_pull_activity($1, $2)
       where
@@ -157,7 +136,7 @@ node "open_external_pull_requests" {
       title,
       jsonb_build_object(
         'repository_full_name', repository_full_name,
-        'author', author,
+        'author', author_login,
         'number', number,
         'created_at', created_at,
         'closed_at', closed_at,
@@ -173,14 +152,7 @@ node "closed_external_pull_requests" {
   sql = <<EOQ
     with data as (
       select distinct
-        number,
-        repository_full_name || '_' || number as pr,
-        title,
-        created_at,
-        closed_at,
-        repository_full_name,
-        author_login as author,
-        html_url
+        *
       from
         public.github_pull_activity($1, $2)
       where
@@ -193,7 +165,7 @@ node "closed_external_pull_requests" {
       title,
       jsonb_build_object(
         'repository_full_name', repository_full_name,
-        'author', author,
+        'author', author_login,
         'number', number,
         'created_at', created_at,
         'closed_at', closed_at,
