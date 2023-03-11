@@ -88,6 +88,7 @@ EOT
     sql = <<EOQ
     create or replace function public.github_activity(match_user text, match_repo text, updated text, match_body text)
     returns table (
+      type text,
       html_url text,
       title text,
       updated_at timestamptz,
@@ -98,6 +99,7 @@ EOT
     ) as $$
     with my_created_issues as (
       select
+        'issue_author',
         i.html_url,
         i.title,
         i.updated_at,
@@ -114,6 +116,7 @@ EOT
 
     my_assigned_issues as (
       select
+        'issue_assignee',
         i.html_url,
         i.title,
         i.updated_at,
@@ -130,6 +133,7 @@ EOT
 
     my_mentioned_issues as (
       select
+        'issue_mention',
         i.html_url,
         i.title,
         i.updated_at,
@@ -146,6 +150,7 @@ EOT
 
     my_created_pulls as (
       select
+        'pr_author',
         p.html_url,
         p.title,
         p.updated_at,
@@ -162,6 +167,7 @@ EOT
 
     my_assigned_pulls as (
       select
+        'pr_assignee',
         p.html_url,
         p.title,
         p.updated_at,
@@ -178,6 +184,7 @@ EOT
 
     my_mentioned_pulls as (
       select
+        'pr_mention',
         p.html_url,
         p.title,
         p.updated_at,
@@ -231,6 +238,7 @@ EOT
 table "activity" {
   sql = <<EOT
     select
+        type,
         html_url,
         title,
         to_char(updated_at, 'YYYY-MM-DD') as updated_at,
