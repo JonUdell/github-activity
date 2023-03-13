@@ -238,7 +238,7 @@ EOT
 table "activity" {
   sql = <<EOT
     select
-        type,
+        array_to_string(array_agg(type order by type), ', ') as type,
         html_url,
         title,
         to_char(updated_at, 'YYYY-MM-DD') as updated_at,
@@ -266,6 +266,8 @@ table "activity" {
           when $4 = 'closed' then closed_at is not null
           else closed_at is null or closed_at is not null
         end
+    group by
+      html_url, title, updated_at, created_at, closed_at
   EOT
 }
 
