@@ -152,11 +152,11 @@ EOT
         member_login text
       ) as $$
       select
-        jsonb_array_elements_text(member_logins) as member_login
+        login
       from
-        github_organization
+        github_organization_member
       where
-        login = 'turbot'
+        organization = 'turbot'
       $$ language sql;
     EOQ
   }
@@ -190,45 +190,46 @@ EOT
   with "github_pull_activity" {
     sql = <<EOQ
       create or replace function public.github_pull_activity(q text, updated text)
-      returns table (
-        query text,
-        repository_full_name text,
-        updated_at text,
-        number int,
-        pr text,
-        title text,
-        author_login text,
-        created_at text,
-        closed_at text,
-        merged_by_login text,
-        comments bigint,
-        html_url text
-      ) as $$
-      select
-        s.query,
-        p.repository_full_name,
-        to_char(s.updated_at, 'YYYY-MM-DD'),
-        s.number,
-        s.repository_full_name || '_' || s.number as pr,
-        p.title,
-        p.author_login,
-        to_char(p.created_at, 'YYYY-MM-DD'),
-        to_char(p.closed_at, 'YYYY-MM-DD'),
-        p.merged_by_login,
-        p.comments,
-        p.html_url
-      from
-        github.github_search_pull_request s
-      join
-        github.github_pull_request p
-      on
-        s.number = p.issue_number
-        and s.repository_full_name = p.repository_full_name
-      where
-        s.query = q || ' updated:>' || updated
-        and p.author_login !~* 'dependabot'
-      order by
-        p.updated_at desc
+        returns table (
+          query text,
+          repository_full_name text,
+          updated_at text,
+          number int,
+          pr text,
+          title text,
+          author_login text,
+          created_at text,
+          closed_at text,
+          merged_by_login text,
+          comments bigint,
+          html_url text
+        ) as $$
+        select
+          s.query,
+          p.repository_full_name,
+          to_char(s.updated_at, 'YYYY-MM-DD'),
+          s.number,
+          s.repository_full_name || '_' || s.number as pr,
+          p.title,
+          p.author->>'login',
+          to_char(p.created_at, 'YYYY-MM-DD'),
+          to_char(p.closed_at, 'YYYY-MM-DD'),
+          p.merged_by->>'login',
+          p.total_comments_count,
+          p.url
+        from
+          github.github_search_pull_request s
+        join
+          github.github_pull_request p
+        on
+          s.number = p.number
+          and s.repository_full_name = p.repository_full_name
+        where
+          -- s.query = q || ' updated:>' || updated
+          s.query = 'org:turbot' || ' updated:>' || '2023-09-30'
+          and p.author->>'login' !~* 'dependabot'
+        order by
+          p.updated_at desc
       $$ language sql;
      EOQ
   }

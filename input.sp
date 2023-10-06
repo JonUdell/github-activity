@@ -3,14 +3,14 @@ input "repos" {
   title = "repo"
   sql = <<EOQ
     select
-      full_name as label,
-      'repo:' || full_name as value
+      name_with_owner as label,
+      'repo:' || name_with_owner as value
     from
       github_my_repository
     where
-      full_name ~ 'turbot/steampipe-(mod|plugin)'
+      name_with_owner ~ 'turbot/steampipe-(mod|plugin)'
     order by
-      full_name
+      name_with_owner
   EOQ
 }
 
