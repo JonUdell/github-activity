@@ -139,7 +139,7 @@ EOT
           author_login not in (select * from github_org_members() )
           and not author_login ~ 'dependabot'
         order by 
-          created_at
+          closed_at desc nulls last
       EOQ
     }
 
