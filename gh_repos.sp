@@ -9,7 +9,7 @@ dashboard "Repos" {
       value = <<EOT
 [ActivityForPerson](${local.host}/github_activity.dashboard.ActivityForPerson)
 🞄
-[ExternalPeople](${local.host}/github_activity.dashboard.ExternalPeople)
+[CommunityPullRequests](${local.host}/github_activity.dashboard.CommunityPullRequests)
 🞄
 Repos
 

@@ -9,7 +9,7 @@ dashboard "CommunityPullRequests" {
       value = <<EOT
 [ActivityForPerson](${local.host}/github_activity.dashboard.ActivityForPerson)
 🞄
-ExternalPeople
+CommunityPullRequests
 🞄
 [Repos](${local.host}/github_activity.dashboard.Repos)
 
