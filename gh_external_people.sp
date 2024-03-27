@@ -44,7 +44,7 @@ EOT
             and closed_at is null
           )
         select
-          count(*) as "open external prs"
+          count(*) as "open community prs"
         from
           data
       EOQ
@@ -65,7 +65,7 @@ EOT
             and closed_at is not null
           )
         select
-          count(*) as "closed external prs"
+          count(*) as "closed community prs"
         from
           data
       EOQ
@@ -77,7 +77,7 @@ EOT
   container {
 
     graph {
-      title = "external contributors"
+      title = "community contributors"
 
       node {
         category = category.person_external
@@ -225,8 +225,7 @@ EOT
           s.number = p.number
           and s.repository_full_name = p.repository_full_name
         where
-          -- s.query = q || ' updated:>' || updated
-          s.query = 'org:turbot' || ' updated:>' || '2023-09-30'
+          s.query = q || ' updated:>' || updated
           and p.author->>'login' !~* 'dependabot'
         order by
           p.updated_at desc

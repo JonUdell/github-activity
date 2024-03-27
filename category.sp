@@ -17,18 +17,18 @@ category "person_org" {
 }
 
 category "pull_request" {
-  icon = "question-mark-circle"
+  icon = "document"
   href = "{{.properties.'html_url'}}"
 }
 
 category "closed_pull_request" {
   color = "green"
-  icon = "question-mark-circle"
+  icon = "document"
   href = "{{.properties.'html_url'}}"
 }
 
 category "open_pull_request" {
   color = "red"
-  icon = "question-mark-circle"
+  icon = "document"
   href = "{{.properties.'html_url'}}"
 }

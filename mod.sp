@@ -3,8 +3,8 @@ mod "github_activity" {
 }
 
 locals {
-  host = "https://cloud.steampipe.io/org/acme/workspace/jon/dashboard"
-  //host = "http://localhost:9194"
+  host = "https://pipes.turbot.com/org/turbot-ops/workspace/stats/dashboard"
+  //host = "http://localhost:9033"
   default_org = "turbot"
   }
 
