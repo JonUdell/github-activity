@@ -1,4 +1,4 @@
-dashboard "ExternalPeople" {
+dashboard "CommunityPullRequests" {
 
   tags = {
     service = "GitHub Activity"
@@ -218,9 +218,9 @@ EOT
           p.total_comments_count,
           p.url
         from
-          github.github_search_pull_request s
+          github_jon.github_search_pull_request s
         join
-          github.github_pull_request p
+          github_jon.github_pull_request p
         on
           s.number = p.number
           and s.repository_full_name = p.repository_full_name

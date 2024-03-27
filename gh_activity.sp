@@ -108,7 +108,7 @@ EOT
           i.comments_total_count as comments,
           i.body
         from
-          github.github_search_issue i
+          github_jon.github_search_issue i
         where
           i.query = 'updated:>=' || updated || ' is:issue author:' || match_user
           and i.url ~ match_repo
@@ -125,7 +125,7 @@ EOT
           i.comments_total_count as comments,
           i.body
         from
-          github.github_search_issue i
+          github_jon.github_search_issue i
         where
           i.query = 'updated:>=' || updated || ' is:issue assignee:' || match_user
           and i.url ~ match_repo
@@ -142,7 +142,7 @@ EOT
           i.comments_total_count as comments,
           i.body
         from
-          github.github_search_issue i
+          github_jon.github_search_issue i
         where
           i.query = 'updated:>=' || updated || ' is:issue mentions:' || match_user
           and i.url ~ match_repo
@@ -159,7 +159,7 @@ EOT
           p.total_comments_count as comments,
           p.body
         from
-          github.github_search_pull_request p
+          github_jon.github_search_pull_request p
         where
           p.query = 'updated:>=' || updated || ' is:pr author:' || match_user
           and p.url ~ match_repo
@@ -176,7 +176,7 @@ EOT
           p.total_comments_count as comments,
           p.body
         from
-          github.github_search_pull_request p
+          github_jon.github_search_pull_request p
         where
           p.query = 'updated:>=' || updated || ' is:pr assignee:' || match_user
           and p.url ~ match_repo
@@ -193,7 +193,7 @@ EOT
           p.total_comments_count as comments,
           p.body
         from
-          github.github_search_pull_request p
+          github_jon.github_search_pull_request p
         where
           p.query = 'updated:>=' || updated || ' is:pr mentions:' || match_user
           and p.url ~ match_repo
