@@ -154,7 +154,7 @@ EOT
       select
         login
       from
-        github_organization_member
+        github_jon.github_organization_member
       where
         organization = 'turbot'
       $$ language sql;

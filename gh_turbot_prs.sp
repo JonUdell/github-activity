@@ -11,7 +11,7 @@ dashboard "TurbotPullRequests" {
 
       node {
         category = category.repo
-        base = node.org_repos
+        base = node.org_repos_datatank
       }
 
       node {
@@ -21,12 +21,12 @@ dashboard "TurbotPullRequests" {
 
       node {
         category = category.closed_pull_request
-        base = node.closed_internal_pull_requests
+        base = node.closed_internal_pull_requests_datatank
       }
 
       node {
         category = category.open_pull_request
-        base = node.open_internal_pull_requests
+        base = node.open_internal_pull_requests_datatank
       }
 
       edge {
@@ -38,7 +38,7 @@ dashboard "TurbotPullRequests" {
       }
 
       edge {
-        base = edge.pr_repo
+        base = edge.pr_repo_datatank
       }
 
 
