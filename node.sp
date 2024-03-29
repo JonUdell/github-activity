@@ -25,7 +25,7 @@ node "people_not_org_members" {
       select distinct
         author_login
       from
-        public.github_pull_activity('org:turbot', $1)
+        github_pull_activity_all
     )
     select
       author_login as id,
@@ -48,25 +48,6 @@ node "org_repos" {
       select distinct
         repository_full_name
       from
-        public.github_pull_activity($1, $2)
-    )
-    select
-      repository_full_name as id,
-      replace(repository_full_name, 'turbot/steampipe-', '') as title,
-      jsonb_build_object(
-        'repository_full_name', repository_full_name
-      ) as properties
-    from
-      data
-  EOQ
-}
-
-node "org_repos_datatank" {
-  sql = <<EOQ
-    with data as (
-      select distinct
-        repository_full_name
-      from
         github_pull_activity_all
     )
     select
@@ -80,13 +61,14 @@ node "org_repos_datatank" {
   EOQ
 }
 
+
 node "open_internal_pull_requests" {
   sql = <<EOQ
     with data as (
       select distinct
         *
       from
-        github_activity($1, $2)
+        github_pull_activity_all
       where
         author_login in (select * from github_org_members() )
         and not author_login ~ 'dependabot'
@@ -115,64 +97,6 @@ node "closed_internal_pull_requests" {
       select distinct
         *
       from
-        github_activity($1, $2)
-      where
-        author_login in (select * from github_org_members() )
-        and not author_login ~ 'dependabot'
-        and closed_at is not null
-    )
-    select
-      pr as id,
-      title,
-      jsonb_build_object(
-        'repository_full_name', repository_full_name,
-        'author', author_login,
-        'number', number,
-        'created_at', created_at,
-        'closed_at', closed_at,
-        'html_url', html_url,
-        'title', title
-      ) as properties
-    from
-      data
-  EOQ
-}
-
-node "open_internal_pull_requests_datatank" {
-  sql = <<EOQ
-    with data as (
-      select distinct
-        *
-      from
-        github_pull_activity_all
-      where
-        author_login in (select * from github_org_members() )
-        and not author_login ~ 'dependabot'
-        and closed_at is null
-    )
-    select
-      pr as id,
-      title,
-      jsonb_build_object(
-        'repository_full_name', repository_full_name,
-        'author', author_login,
-        'number', number,
-        'created_at', created_at,
-        'closed_at', closed_at,
-        'html_url', html_url,
-        'title', title
-      ) as properties
-    from
-      data
-  EOQ
-}
-
-node "closed_internal_pull_requests_datatank" {
-  sql = <<EOQ
-    with data as (
-      select distinct
-        *
-      from
         github_pull_activity_all
       where
         author_login in (select * from github_org_members() )
@@ -195,6 +119,7 @@ node "closed_internal_pull_requests_datatank" {
       data
   EOQ
 }
+
 
 node "open_external_pull_requests" {
   sql = <<EOQ
@@ -202,7 +127,7 @@ node "open_external_pull_requests" {
       select distinct
         *
       from
-        public.github_pull_activity($1, $2)
+        github_pull_activity_all
       where
         not author_login in (select * from github_org_members() )
         and not author_login ~ 'dependabot'
@@ -231,7 +156,7 @@ node "closed_external_pull_requests" {
       select distinct
         *
       from
-        public.github_pull_activity($1, $2)
+        github_pull_activity_all
       where
         not author_login in (select * from github_org_members() )
         and not author_login ~ 'dependabot'

@@ -9,30 +9,11 @@ edge "person_pr" {
         'title', title
       ) as properties
     from
-      public.github_pull_activity($1, $2)
+      github_pull_activity_all
   EOQ
 }
 
 edge "person_open_pr" {
-  sql = <<EOQ
-    select distinct
-      author_login as from_id,
-      repository_full_name || '_' || number as to_id,
-      'author' as title,
-      jsonb_build_object(
-        'repository_full_name', repository_full_name,
-        'author', author_login,
-        'html_url', html_url,
-        'closed_at', closed_at
-      ) as properties
-    from
-      public.github_pull_activity($1, $2)
-    where
-      closed_at is null
-    EOQ
-}
-
-edge "person_open_pr_datatank" {
   sql = <<EOQ
     select distinct
       author_login as from_id,
@@ -51,6 +32,7 @@ edge "person_open_pr_datatank" {
     EOQ
 }
 
+
 edge "person_closed_pr" {
   sql = <<EOQ
     select distinct
@@ -64,7 +46,7 @@ edge "person_closed_pr" {
         'closed_at', closed_at
       ) as properties
     from
-      public.github_pull_activity($1, $2)
+      github_pull_activity_all
     where
       closed_at is not null
   EOQ
@@ -119,27 +101,8 @@ edge "pr_repo" {
         'author', author_login,
         'title', title
       ) as properties
-
-    from
-      public.github_pull_activity($1, $2)
-  EOQ
-}
-
-edge "pr_repo_datatank" {
-  sql = <<EOQ
-    select distinct
-      repository_full_name || '_' || number as from_id,
-      repository_full_name as to_id,
-      'pull' as title,
-      jsonb_build_object(
-        'repository_full_name', repository_full_name,
-        'author', author_login,
-        'title', title
-      ) as properties
-
     from
       github_pull_activity_all
   EOQ
 }
-
 

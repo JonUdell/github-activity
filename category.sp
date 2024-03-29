@@ -13,7 +13,7 @@ category "person_external" {
 category "person_org" {
   color = "darkred"
   icon = "person"
-  href = "${local.host}/github.dashboard.ActivityForPerson?input.repo_pattern=turbot&input.issue_or_pull=both&input.open_or_closed=both&input.text_match=none&input.username={{.properties.'login'}}&input.updated=2021-01-01"
+  href = "${local.host}/github.dashboard.Turbot_GitHub_Activity_By_Person?input.repo_pattern=turbot&input.issue_or_pull=both&input.open_or_closed=both&input.text_match=none&input.username={{.properties.'login'}}&input.updated=2021-01-01"
 }
 
 category "pull_request" {
