@@ -55,7 +55,6 @@ dashboard "All_Turbot_Pull_Requests" {
         base = edge.pr_repo
       }
 
-
     }
 
     table {

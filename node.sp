@@ -5,9 +5,7 @@ node "people_org_members" {
         member_login
       from
         github_org_members()
-      where not 
-        member_login in ( select excluded_member_login from github_org_excluded_members() )
-    )
+   )
     select
       member_login as id,
       member_login as title,

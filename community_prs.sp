@@ -60,6 +60,26 @@ dashboard "Community_Pull_Requests" {
       EOQ
     }
 
+    card {
+      width = 2
+      sql = <<EOQ
+        select max(updated_at) as newest_update
+          from
+            github_pull_activity_all
+      EOQ
+    }
+
+    card {
+      width = 2
+      sql = <<EOQ
+        select min(updated_at) as oldest_update
+          from
+            github_pull_activity_all
+      EOQ
+    }
+
+
+
 
   }
 
@@ -138,6 +158,7 @@ dashboard "Community_Pull_Requests" {
         github_jon.github_organization_member
       where
         organization = 'turbot'
+        and not login in ( select excluded_member_login from github_org_excluded_members() )
       $$ language sql;
     EOQ
   }
