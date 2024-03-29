@@ -62,24 +62,13 @@ dashboard "Community_Pull_Requests" {
 
     card {
       width = 2
-      sql = <<EOQ
-        select max(updated_at) as newest_update
-          from
-            github_pull_activity_all
-      EOQ
+      base = card.max_updated
     }
 
     card {
       width = 2
-      sql = <<EOQ
-        select min(updated_at) as oldest_update
-          from
-            github_pull_activity_all
-      EOQ
+      base = card.min_updated
     }
-
-
-
 
   }
 

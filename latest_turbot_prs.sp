@@ -18,6 +18,20 @@ dashboard "Latest_Turbot_Pull_Requests" {
     }
   }  
 
+  container {
+
+    card {
+      width = 2
+      base = card.max_updated
+    }
+
+    card {
+      width = 2
+      base = card.min_updated
+    }
+
+  }
+
 
   container {
 

@@ -1,16 +1,13 @@
-input "repos" {
+input "turbot_logins" {
   width = 4
-  title = "repo"
   sql = <<EOQ
     select
-      name_with_owner as label,
-      'repo:' || name_with_owner as value
+      member_login as label,
+      member_login as value
     from
-      github_my_repository
-    where
-      name_with_owner ~ 'turbot/steampipe-(mod|plugin)'
+      github_org_members()
     order by
-      name_with_owner
+      lower(member_login)
   EOQ
 }
 
