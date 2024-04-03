@@ -1,18 +1,3 @@
-edge "person_pr" {
-  sql = <<EOQ
-    select distinct
-      author_login as from_id,
-      number as to_id,
-      jsonb_build_object(
-        'repository_full_name', repository_full_name,
-        'author', author_login,
-        'title', title
-      ) as properties
-    from
-      github_pull_activity_all
-  EOQ
-}
-
 edge "person_open_pr" {
   sql = <<EOQ
     select distinct

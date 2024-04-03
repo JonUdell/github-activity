@@ -84,7 +84,6 @@ node "issue_people_not_org_members" {
   EOQ
 }
 
-
 node "pr_repos" {
   sql = <<EOQ
     with data as (
