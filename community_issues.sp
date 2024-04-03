@@ -77,12 +77,12 @@ dashboard "Community_Issues" {
 
       node {
         category = category.person_community
-        base = node.people_not_org_members
+        base = node.issue_people_not_org_members
       }
 
       node {
         category = category.repo
-        base = node.org_repos
+        base = node.issue_repos
       }
 
       node {

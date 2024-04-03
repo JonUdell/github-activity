@@ -44,7 +44,7 @@ dashboard "Turbot_Issues_By_Person" {
 
       node {
         category = category.repo
-        base = node.org_repos
+        base = node.issue_repos
       }
 
       node {

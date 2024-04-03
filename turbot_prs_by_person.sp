@@ -44,7 +44,7 @@ dashboard "Turbot_Pull_Requests_By_Person" {
 
       node {
         category = category.repo
-        base = node.org_repos
+        base = node.pr_repos
       }
 
       node {

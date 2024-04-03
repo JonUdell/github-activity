@@ -38,7 +38,7 @@ node "people_org_members_filtered" {
   EOQ
 }
 
-node "people_not_org_members" {
+node "pr_people_not_org_members" {
   sql = <<EOQ
     with data as (
       select distinct
@@ -61,7 +61,31 @@ node "people_not_org_members" {
   EOQ
 }
 
-node "org_repos" {
+node "issue_people_not_org_members" {
+  sql = <<EOQ
+    with data as (
+      select distinct
+        author_login
+      from
+        github_issue_activity_all
+    )
+    select
+      author_login as id,
+      author_login as title,
+      jsonb_build_object(
+        'login', author_login
+      ) as properties
+    from
+      data
+    where
+      not author_login in ( select member_login from github_org_members() )
+      and author_login !~ 'dependabot'
+      and not author_login in ( select excluded_member_login from github_org_excluded_members() )
+  EOQ
+}
+
+
+node "pr_repos" {
   sql = <<EOQ
     with data as (
       select distinct
@@ -79,6 +103,26 @@ node "org_repos" {
       data
   EOQ
 }
+
+node "issue_repos" {
+  sql = <<EOQ
+    with data as (
+      select distinct
+        repository_full_name
+      from
+        github_issue_activity_all
+    )
+    select
+      repository_full_name as id,
+      replace(repository_full_name, 'turbot/steampipe-', '') as title,
+      jsonb_build_object(
+        'repository_full_name', repository_full_name
+      ) as properties
+    from
+      data
+  EOQ
+}
+
 
 node "open_internal_pull_requests_filtered" {
   sql = <<EOQ
@@ -101,6 +145,34 @@ node "open_internal_pull_requests_filtered" {
         'created_at', created_at,
         'closed_at', closed_at,
         'html_url', html_url,
+        'title', title
+      ) as properties
+    from
+      data
+  EOQ
+}
+
+node "closed_internal_issues_filtered" {
+  sql = <<EOQ
+    with data as (
+      select distinct
+        *
+      from
+        github_issue_activity_all
+      where
+        author_login = $1
+        and closed_at is not null
+    )
+    select
+      issue as id,
+      title,
+      jsonb_build_object(
+        'repository_full_name', repository_full_name,
+        'author', author_login,
+        'number', number,
+        'created_at', created_at,
+        'closed_at', closed_at,
+        'url', url,
         'title', title
       ) as properties
     from
@@ -157,34 +229,6 @@ node "closed_internal_pull_requests_filtered" {
         'created_at', created_at,
         'closed_at', closed_at,
         'html_url', html_url,
-        'title', title
-      ) as properties
-    from
-      data
-  EOQ
-}
-
-node "closed_internal_issues_filtered" {
-  sql = <<EOQ
-    with data as (
-      select distinct
-        *
-      from
-        github_issue_activity_all
-      where
-        author_login = $1
-        and closed_at is not null
-    )
-    select
-      issue as id,
-      title,
-      jsonb_build_object(
-        'repository_full_name', repository_full_name,
-        'author', author_login,
-        'number', number,
-        'created_at', created_at,
-        'closed_at', closed_at,
-        'url', url,
         'title', title
       ) as properties
     from
