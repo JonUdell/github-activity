@@ -253,5 +253,61 @@ node "closed_external_pull_requests" {
   EOQ
 }
 
+node "open_external_issues" {
+  sql = <<EOQ
+    with data as (
+      select distinct
+        *
+      from
+        github_issue_activity_all
+      where
+        not author_login in (select * from github_org_members() )
+        and closed_at is null
+    )
+    select
+      issue as id,
+      title,
+      jsonb_build_object(
+        'repository_full_name', repository_full_name,
+        'author', author_login,
+        'number', number,
+        'created_at', created_at,
+        'closed_at', closed_at,
+        'url', url,
+        'title', title
+      ) as properties
+    from
+      data
+  EOQ
+}
+
+node "closed_external_issues" {
+  sql = <<EOQ
+    with data as (
+      select distinct
+        *
+      from
+        github_issue_activity_all
+      where
+        not author_login in (select * from github_org_members() )
+        and closed_at is not null
+    )
+    select
+      issue as id,
+      title,
+      jsonb_build_object(
+        'repository_full_name', repository_full_name,
+        'author', author_login,
+        'number', number,
+        'created_at', created_at,
+        'closed_at', closed_at,
+        'url', url,
+        'title', title
+      ) as properties
+    from
+      data
+  EOQ
+}
+
 
 

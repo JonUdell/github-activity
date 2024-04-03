@@ -52,6 +52,46 @@ edge "person_closed_pr" {
   EOQ
 }
 
+edge "person_open_issue" {
+  sql = <<EOQ
+    select distinct
+      author_login as from_id,
+      repository_full_name || '_' || number as to_id,
+      'author' as title,
+      jsonb_build_object(
+        'repository_full_name', repository_full_name,
+        'author', author_login,
+        'url', url,
+        'closed_at', closed_at
+      ) as properties
+    from
+      github_issue_activity_all
+    where
+      closed_at is null
+    EOQ
+}
+
+
+edge "person_closed_issue" {
+  sql = <<EOQ
+    select distinct
+      author_login as from_id,
+      repository_full_name || '_' || number as to_id,
+      'author' as title,
+      jsonb_build_object(
+        'repository_full_name', repository_full_name,
+        'author', author_login,
+        'url', url,
+        'closed_at', closed_at
+      ) as properties
+    from
+      github_issue_activity_all
+    where
+      closed_at is not null
+  EOQ
+}
+
+
 edge "person_org_open_pr" {
   sql = <<EOQ
     select distinct
@@ -126,4 +166,21 @@ edge "pr_repo" {
       github_pull_activity_all
   EOQ
 }
+
+edge "issue_repo" {
+  sql = <<EOQ
+    select distinct
+      repository_full_name || '_' || number as from_id,
+      repository_full_name as to_id,
+      'issue' as title,
+      jsonb_build_object(
+        'repository_full_name', repository_full_name,
+        'author', author_login,
+        'title', title
+      ) as properties
+    from
+      github_issue_activity_all
+  EOQ
+}
+
 

@@ -16,5 +16,7 @@ locals {
 [Turbot_Pull_Requests_By_Person](__HOST__/github_activity.dashboard.Turbot_Pull_Requests_By_Person)
 •
 [Community_Pull_Requests](__HOST__/github_activity.dashboard.Community_Pull_Requests)
+•
+[Community_Issues](__HOST__/github_activity.dashboard.Community_Issues)
 EOT
 }

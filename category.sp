@@ -32,3 +32,15 @@ category "open_pull_request" {
   icon = "document"
   href = "{{.properties.'html_url'}}"
 }
+
+category "closed_issue" {
+  color = "green"
+  icon = "document"
+  href = "{{.properties.'url'}}"
+}
+
+category "open_issue" {
+  color = "red"
+  icon = "document"
+  href = "{{.properties.'url'}}"
+}
