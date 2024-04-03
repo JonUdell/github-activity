@@ -3,9 +3,9 @@ mod "github_activity" {
 }
 
 locals {
-  //host = "https://pipes.turbot.com/org/turbot-ops/workspace/stats/dashboard"
+  host = "https://pipes.turbot.com/org/turbot-ops/workspace/stats/dashboard"
   //host = "http://localhost:9194"
-  host = "http://localhost:9033"
+  //host = "http://localhost:9033"
   default_org = "turbot"
 
   menu = <<EOT
