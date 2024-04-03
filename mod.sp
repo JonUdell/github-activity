@@ -11,9 +11,9 @@ locals {
   menu = <<EOT
 [Turbot_GitHub_Activity_By_Person](__HOST__/github_activity.dashboard.Turbot_GitHub_Activity_By_Person)
 •
-[Latest_Turbot_Pull_Requests](__HOST__/github_activity.dashboard.Latest_Turbot_Pull_Requests)
-•
 [Turbot_Pull_Requests_By_Person](__HOST__/github_activity.dashboard.Turbot_Pull_Requests_By_Person)
+•
+[Turbot_Issues_By_Person](__HOST__/github_activity.dashboard.Turbot_Issues_Requests_By_Person)
 •
 [Community_Pull_Requests](__HOST__/github_activity.dashboard.Community_Pull_Requests)
 •

@@ -119,6 +119,7 @@ node "open_internal_pull_requests_filtered" {
         github_pull_activity_all
       where
         author_login = $1
+        and closed_at is not null
     )
     select
       pr as id,
@@ -136,6 +137,35 @@ node "open_internal_pull_requests_filtered" {
       data
   EOQ
 }
+
+node "open_internal_issues_filtered" {
+  sql = <<EOQ
+    with data as (
+      select distinct
+        *
+      from
+        github_issue_activity_all
+      where
+        author_login = $1
+        and closed_at is null
+    )
+    select
+      issue as id,
+      title,
+      jsonb_build_object(
+        'repository_full_name', repository_full_name,
+        'author', author_login,
+        'number', number,
+        'created_at', created_at,
+        'closed_at', closed_at,
+        'url', url,
+        'title', title
+      ) as properties
+    from
+      data
+  EOQ
+}
+
 
 
 node "closed_internal_pull_requests" {
@@ -193,6 +223,34 @@ node "closed_internal_pull_requests_filtered" {
       data
   EOQ
 }
+
+node "closed_internal_issues_filtered" {
+  sql = <<EOQ
+    with data as (
+      select distinct
+        *
+      from
+        github_issue_activity_all
+      where
+        author_login = $1
+    )
+    select
+      issue as id,
+      title,
+      jsonb_build_object(
+        'repository_full_name', repository_full_name,
+        'author', author_login,
+        'number', number,
+        'created_at', created_at,
+        'closed_at', closed_at,
+        'url', url,
+        'title', title
+      ) as properties
+    from
+      data
+  EOQ
+}
+
 
 
 node "open_external_pull_requests" {

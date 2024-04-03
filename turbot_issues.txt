@@ -1,4 +1,4 @@
-dashboard "Latest_Turbot_Pull_Requests" {
+dashboard "Turbot_Issues" {
 
   tags = {
     service = "GitHub Activity"
@@ -12,8 +12,8 @@ dashboard "Latest_Turbot_Pull_Requests" {
           "__HOST__",
           "${local.host}"
         ),
-        "[Latest_Turbot_Pull_Requests](${local.host}/github_activity.dashboard.Latest_Turbot_Pull_Requests)",
-        "Latest_Turbot_Pull_Requests"
+        "[Turbot_Issues](${local.host}/github_activity.dashboard.Turbot_Issues)",
+        "Turbot_Issues"
       )
     }
   }  
@@ -32,13 +32,12 @@ dashboard "Latest_Turbot_Pull_Requests" {
 
   }
 
-
   container {
 
     table {
-      title = "Latest PR activity by repo"
+      title = "Latest issue activity by repo"
       sql = <<EOQ
-        with rankedprs as (
+        with ranked_issues as (
           select
             repository_full_name,
             number,
@@ -47,13 +46,13 @@ dashboard "Latest_Turbot_Pull_Requests" {
             closed_at,
             author_login,
             title,
-            html_url,
+            url,
             row_number() over (
               partition by repository_full_name 
               order by created_at desc
             ) as rank
           from
-            github_pull_activity_all
+            github_issue_activity_all
         )
         select
           repository_full_name,
@@ -63,11 +62,12 @@ dashboard "Latest_Turbot_Pull_Requests" {
           closed_at,
           author_login,
           title,
-          html_url
+          url
         from
-          rankedprs
+          ranked_issues
         where
-          rank = 1;
+          rank = 1
+          and author_login in ( select * from github_org_members() )
       EOQ
     }
 

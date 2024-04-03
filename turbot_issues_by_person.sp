@@ -1,4 +1,4 @@
-dashboard "Turbot_Pull_Requests_By_Person" {
+dashboard "Turbot_Issues_By_Person" {
 
   tags = {
     service = "GitHub Activity"
@@ -12,8 +12,8 @@ dashboard "Turbot_Pull_Requests_By_Person" {
           "__HOST__",
           "${local.host}"
         ),
-        "[Turbot_Pull_Requests_By_Person](${local.host}/github_activity.dashboard.Turbot_Pull_Requests_By_Person)",
-        "Turbot_Pull_Requests_By_Person"
+        "[Turbot_Issues_By_Person](${local.host}/github_activity.dashboard.Turbot_Issues_By_Person)",
+        "Turbot_Issues_By_Person"
       )
     }
   }  
@@ -40,7 +40,7 @@ dashboard "Turbot_Pull_Requests_By_Person" {
   container {
 
     graph {
-      title = "Turbot PRs"
+      title = "Turbot issues"
 
       node {
         category = category.repo
@@ -55,14 +55,14 @@ dashboard "Turbot_Pull_Requests_By_Person" {
 
       node {
         args = [self.input.turbot_logins.value]
-        category = category.closed_pull_request
-        base = node.closed_internal_pull_requests_filtered
+        category = category.closed_issue
+        base = node.closed_internal_issues_filtered
       }
 
       node {
         args = [self.input.turbot_logins.value]
-        category = category.open_pull_request
-        base = node.open_internal_pull_requests_filtered
+        category = category.open_issue
+        base = node.open_internal_issues_filtered
       }
 
       edge {
@@ -75,7 +75,7 @@ dashboard "Turbot_Pull_Requests_By_Person" {
       }
 
       edge {
-        base = edge.pr_repo
+        base = edge.issue_repo
       }
 
     }
