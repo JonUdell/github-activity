@@ -38,7 +38,6 @@ node "people_org_members_filtered" {
   EOQ
 }
 
-
 node "people_not_org_members" {
   sql = <<EOQ
     with data as (
@@ -81,35 +80,6 @@ node "org_repos" {
   EOQ
 }
 
-node "open_internal_pull_requests" {
-  sql = <<EOQ
-    with data as (
-      select distinct
-        *
-      from
-        github_pull_activity_all
-      where
-        author_login in (select * from github_org_members() )
-        and not author_login ~ 'dependabot'
-        and closed_at is null
-    )
-    select
-      pr as id,
-      title,
-      jsonb_build_object(
-        'repository_full_name', repository_full_name,
-        'author', author_login,
-        'number', number,
-        'created_at', created_at,
-        'closed_at', closed_at,
-        'html_url', html_url,
-        'title', title
-      ) as properties
-    from
-      data
-  EOQ
-}
-
 node "open_internal_pull_requests_filtered" {
   sql = <<EOQ
     with data as (
@@ -119,7 +89,7 @@ node "open_internal_pull_requests_filtered" {
         github_pull_activity_all
       where
         author_login = $1
-        and closed_at is not null
+        and closed_at is null
     )
     select
       pr as id,
@@ -166,37 +136,6 @@ node "open_internal_issues_filtered" {
   EOQ
 }
 
-
-
-node "closed_internal_pull_requests" {
-  sql = <<EOQ
-    with data as (
-      select distinct
-        *
-      from
-        github_pull_activity_all
-      where
-        author_login in (select * from github_org_members() )
-        and not author_login ~ 'dependabot'
-        and closed_at is not null
-    )
-    select
-      pr as id,
-      title,
-      jsonb_build_object(
-        'repository_full_name', repository_full_name,
-        'author', author_login,
-        'number', number,
-        'created_at', created_at,
-        'closed_at', closed_at,
-        'html_url', html_url,
-        'title', title
-      ) as properties
-    from
-      data
-  EOQ
-}
-
 node "closed_internal_pull_requests_filtered" {
   sql = <<EOQ
     with data as (
@@ -206,6 +145,7 @@ node "closed_internal_pull_requests_filtered" {
         github_pull_activity_all
       where
         author_login = $1
+        and closed_at is not null
     )
     select
       pr as id,
@@ -233,6 +173,7 @@ node "closed_internal_issues_filtered" {
         github_issue_activity_all
       where
         author_login = $1
+        and closed_at is not null
     )
     select
       issue as id,
