@@ -1,7 +1,7 @@
 node "people_org_members" {
   sql = <<EOQ
     with data as (
-      select 
+      select
         member_login
       from
         github_org_members()
@@ -192,9 +192,7 @@ node "closed_internal_issues_filtered" {
   EOQ
 }
 
-
-
-node "open_external_pull_requests" {
+node "open_community_pull_requests" {
   sql = <<EOQ
     with data as (
       select distinct
@@ -223,7 +221,7 @@ node "open_external_pull_requests" {
   EOQ
 }
 
-node "closed_external_pull_requests" {
+node "closed_community_pull_requests" {
   sql = <<EOQ
     with data as (
       select distinct
@@ -252,7 +250,7 @@ node "closed_external_pull_requests" {
   EOQ
 }
 
-node "open_external_issues" {
+node "open_community_issues" {
   sql = <<EOQ
     with data as (
       select distinct
@@ -280,7 +278,7 @@ node "open_external_issues" {
   EOQ
 }
 
-node "closed_external_issues" {
+node "closed_community_issues" {
   sql = <<EOQ
     with data as (
       select distinct

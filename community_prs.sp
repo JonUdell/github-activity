@@ -78,7 +78,7 @@ dashboard "Community_Pull_Requests" {
       title = "community contributors"
 
       node {
-        category = category.person_external
+        category = category.person_community
         base = node.people_not_org_members
       }
 
@@ -89,12 +89,12 @@ dashboard "Community_Pull_Requests" {
 
       node {
         category = category.open_pull_request
-        base = node.open_external_pull_requests
+        base = node.open_community_pull_requests
       }
 
       node {
         category = category.closed_pull_request
-        base = node.closed_external_pull_requests
+        base = node.closed_community_pull_requests
       }
 
       edge {

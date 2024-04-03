@@ -95,9 +95,7 @@ dashboard "Turbot_Pull_Requests_By_Person" {
         from
           github_pull_activity_all
         where
-          author_login in (select * from github_org_members() )
-          and not author_login ~ 'dependabot'
-          and author_login = $1
+          author_login = $1
         order by 
           closed_at desc nulls last
       EOQ

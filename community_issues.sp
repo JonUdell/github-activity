@@ -76,7 +76,7 @@ dashboard "Community_Issues" {
       title = "community issues"
 
       node {
-        category = category.person_external
+        category = category.person_community
         base = node.people_not_org_members
       }
 
@@ -87,12 +87,12 @@ dashboard "Community_Issues" {
 
       node {
         category = category.open_issue
-        base = node.open_external_issues
+        base = node.open_community_issues
       }
 
       node {
         category = category.closed_issue
-        base = node.closed_external_issues
+        base = node.closed_community_issues
       }
 
       edge {

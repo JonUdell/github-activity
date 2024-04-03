@@ -22,7 +22,7 @@ dashboard "Turbot_GitHub_Activity_By_Person" {
     title = "username"
     type = "combo"
     width = 2
-    query = query.usernames
+    base = input.turbot_logins
   }
 
   input "repo_pattern" {

@@ -67,11 +67,12 @@ dashboard "Turbot_Issues_By_Person" {
 
       edge {
         args = [self.input.turbot_logins.value]
-        base = edge.person_org_open_pr_filtered
+        base = edge.person_org_open_issue_filtered
       }
 
       edge {
-        base = edge.person_org_closed_pr
+        args = [self.input.turbot_logins.value]
+        base = edge.person_org_closed_issue_filtered
       }
 
       edge {
@@ -90,13 +91,11 @@ dashboard "Turbot_Issues_By_Person" {
           updated_at,
           closed_at,
           title,
-          html_url
+          url
         from
-          github_pull_activity_all
+          github_issue_activity_all
         where
-          author_login in (select * from github_org_members() )
-          and not author_login ~ 'dependabot'
-          and author_login = $1
+          author_login = $1
         order by 
           closed_at desc nulls last
       EOQ

@@ -4,7 +4,7 @@ category "repo" {
   href = "https://github.com/{{.properties.'repository_full_name'}}"
 }
 
-category "person_external" {
+category "person_community" {
   color = "orange"
   icon = "person"
   href = "https://github.com/{{.properties.'login'}}"
