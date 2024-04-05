@@ -131,48 +131,4 @@ dashboard "Community_Issues" {
 
   }
 
-  with "github_issue_activity" {
-    sql = <<EOQ
-    create or replace function public.github_issue_activity(org text, updated text)
-      returns table (
-        query text,
-        repository_full_name text,
-        updated_at text,
-        number int,
-        issue text,
-        title text,
-        author_login text,
-        created_at text,
-        closed_at text,
-        comments bigint,
-        url text    
-      ) as $$
-      select
-        s.query,
-        i.repository_full_name,
-        to_char(i.updated_at, 'YYYY-MM-DD'),
-        i.number,
-        i.repository_full_name || '_' || i.number,        
-        i.title,
-        i.author->>'login',
-        to_char(i.created_at, 'YYYY-MM-DD'),
-        to_char(i.closed_at, 'YYYY-MM-DD'),
-        i.comments_total_count,
-        i.url
-      from 
-        github_search_issue s
-      join 
-        github_issue i
-      on 
-        s.number = i.number
-        and s.repository_full_name = i.repository_full_name
-      where 
-        s.query = 'org:' || org || ' updated:>' || '2024-03-30'
-    $$ language sql;
-    EOQ
-  }
-
-
- 
-
 }
