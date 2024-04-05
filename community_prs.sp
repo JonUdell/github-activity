@@ -147,14 +147,14 @@ dashboard "Community_Pull_Requests" {
         github_jon.github_organization_member
       where
         organization = 'turbot'
-        and not login in ( select excluded_member_login from github_org_excluded_members() )
+        and not login in ( select excluded_member_login from github_org_excluded_members2() )
       $$ language sql;
     EOQ
   }
 
   with "github_excluded_org_members" {
     sql = <<EOQ
-      create or replace function public.github_org_excluded_members() returns table (
+      create or replace function public.github_org_excluded_members2() returns table (
         excluded_member_login text
       ) as $$
       select
