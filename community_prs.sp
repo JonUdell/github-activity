@@ -88,12 +88,12 @@ dashboard "Community_Pull_Requests" {
       }
 
       node {
-        category = category.open_pull_request
+        category = category.open_pull_request_community
         base = node.open_community_pull_requests
       }
 
       node {
-        category = category.closed_pull_request
+        category = category.closed_pull_request_community
         base = node.closed_community_pull_requests
       }
 

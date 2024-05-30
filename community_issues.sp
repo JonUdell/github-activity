@@ -86,12 +86,12 @@ dashboard "Community_Issues" {
       }
 
       node {
-        category = category.open_issue
+        category = category.open_issue_community
         base = node.open_community_issues
       }
 
       node {
-        category = category.closed_issue
+        category = category.closed_issue_community
         base = node.closed_community_issues
       }
 

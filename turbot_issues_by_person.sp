@@ -55,13 +55,13 @@ dashboard "Turbot_Issues_By_Person" {
 
       node {
         args = [self.input.turbot_logins.value]
-        category = category.closed_issue
+        category = category.closed_issue_org
         base = node.closed_internal_issues_filtered
       }
 
       node {
         args = [self.input.turbot_logins.value]
-        category = category.open_issue
+        category = category.open_issue_org
         base = node.open_internal_issues_filtered
       }
 

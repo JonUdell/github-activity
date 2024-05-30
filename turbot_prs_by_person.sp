@@ -55,13 +55,13 @@ dashboard "Turbot_Pull_Requests_By_Person" {
 
       node {
         args = [self.input.turbot_logins.value]
-        category = category.closed_pull_request
+        category = category.closed_pull_request_org
         base = node.closed_internal_pull_requests_filtered
       }
 
       node {
         args = [self.input.turbot_logins.value]
-        category = category.open_pull_request
+        category = category.open_pull_request_org
         base = node.open_internal_pull_requests_filtered
       }
 

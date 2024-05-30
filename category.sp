@@ -5,42 +5,69 @@ category "repo" {
 }
 
 category "person_community" {
-  color = "orange"
+  color = "brown"
   icon = "person"
   href = "https://github.com/{{.properties.'login'}}"
 }
 
 category "person_org" {
-  color = "darkred"
+  color = "red"
   icon = "person"
-  href = "https://github.com/{{.properties.'login'}}"
+  href = "https://github.com/{{.properties.'member_login'}}"
 }
 
 category "pull_request" {
   icon = "document"
-  href = "{{.properties.'html_url'}}"
+  href = "{{.properties.'url'}}"
 }
 
-category "closed_pull_request" {
-  color = "green"
-  icon = "document"
-  href = "{{.properties.'html_url'}}"
-}
-
-category "open_pull_request" {
+category "open_pull_request_community" {
   color = "red"
   icon = "document"
   href = "{{.properties.'html_url'}}"
 }
 
-category "closed_issue" {
+category "closed_pull_request_community" {
+  color = "green"
+  icon = "document"
+  href = "{{.properties.'html_url'}}"
+}
+
+category "open_issue_community" {
+  color = "red"
+  icon = "document"
+  href = "{{.properties.'url'}}"
+}
+
+category "closed_issue_community" {
   color = "green"
   icon = "document"
   href = "{{.properties.'url'}}"
 }
 
-category "open_issue" {
+category "open_pull_request_org" {
+  color = "red"
+  icon = "document"
+  href = "{{.properties.'html_url'}}"
+}
+
+category "closed_pull_request_org" {
+  color = "green"
+  icon = "document"
+  href = "{{.properties.'html_url'}}"
+}
+
+category "open_issue_org" {
   color = "red"
   icon = "document"
   href = "{{.properties.'url'}}"
 }
+
+category "closed_issue_org" {
+  color = "green"
+  icon = "document"
+  href = "{{.properties.'url'}}"
+}
+
+
+
