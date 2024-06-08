@@ -1,3 +1,4 @@
+-- because the other version is owned by steampipe, not judell
 create or replace function public.github_org_excluded_members2() returns table (
   excluded_member_login text
 ) as $$
