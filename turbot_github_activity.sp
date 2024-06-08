@@ -38,17 +38,17 @@ dashboard "Turbot_GitHub_Activity_By_Person" {
   input "issue_or_pull" {
     title = "issue/pull"
     width = 2
+    option "both" {}
     option "issue" {}
     option "pull" {}
-    option "both" {}
   }
 
   input "open_or_closed" {
     title = "open/closed"
     width = 2
+    option "both" {}
     option "open" {}
     option "closed" {}
-    option "both" {}
   }
 
   input "updated" {
@@ -120,6 +120,8 @@ table "activity" {
         end
     group by
       html_url, title, updated_at, created_at, closed_at
+    order by
+      updated_at desc
   EOT
 }
 
